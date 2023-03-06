@@ -163,9 +163,15 @@ def terminate():
 
 
 def finish_screen(screen, w=False, bill=0):
+    with open('data/records.csv', encoding="utf8") as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=';', quotechar='"')
+        b = sorted(reader, key=lambda x: int(x['bill']))
+        b(LEVELS)
     clock = pygame.time.Clock()
     if w:
-        intro_text = ["Победа!", f"Ваш счёт: {bill}"]
+        intro_text = ["Победа!", f"Ваш счёт: {bill}", "Введите Ваше имя:"]
+
+
     else:
         intro_text = ["Game over!", ]
     fon = pygame.transform.scale(load_image('nightskycolor.png'), (size))

@@ -1,0 +1,4 @@
+lev;monster;monster_life;sound;speed
+1;blue_ufo_gmc_0021.png;500;data\Mars.wav;1
+2;green_ufo_gmc_0021.png;1000;data\Mercury.wav;1.5
+3;red_ufo_gmc_0021.png;3000;data\Venus.wav;2

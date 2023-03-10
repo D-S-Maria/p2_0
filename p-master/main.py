@@ -4,6 +4,7 @@ import sys
 from random import randint, choice, random
 
 import pygame
+import pygame_textinput
 
 
 def load_image(name, color_key=None):
@@ -35,11 +36,6 @@ with open('data/levels.csv', encoding="utf8") as csvfile:
     LEVELS = sorted(reader, key=lambda x: int(x['lev']))
     print(LEVELS)
 LEV = 0
-
-
-# ship_monster_im_1 = load_image('blue_ufo_gmc_0021.png', -1)
-# ship_monster_im_2 = load_image('green_ufo_gmc_0021.png', -1)
-# ship_monster_im_3 = load_image('red_ufo_gmc_0021.png', -1)
 
 
 class Player(pygame.sprite.Sprite):
@@ -161,36 +157,85 @@ def terminate():
     pygame.quit()
     sys.exit()
 
+def rec_table(screen):
+    print('fdg')
+    data = {'name': 'maria', 'bill': '15'}
+    with open('data/records.csv', 'w', newline='', encoding="utf8") as f:
+        writer = csv.DictWriter(
+            f, fieldnames=list(data[0].keys()),
+            delimiter=';', quoting=csv.QUOTE_NONNUMERIC)
+        writer.writeheader()
+        for d in data:
+            writer.writerow(d)
+    # with open('data/records.csv', encoding="utf8") as csvfile:
+    #     reader = csv.DictReader(csvfile, delimiter=';', quotechar='"')
+    #     b = sorted(reader, key=lambda x: int(x['bill']))
+    #     b[LEVELS]
+    # clock = pygame.time.Clock()
+    # intro_text = ["2250 год...",
+    #               "На планету Земля прилетели ПРИШЕЛЬЦЫ!!!",
+    #               "Твоя миссия спасти нашу планету!",
+    #               "НАЖМИ ЛЮБУЮ КЛАВИШУ...",
+    #               "...и начнется БИТВА..."
+    #               ]
+    # fon = pygame.transform.scale(load_image('nightskycolor.png'), (size))
+    # screen.blit(fon, (0, 0))
+    # font = pygame.font.Font('cd2f1-36d91_sunday.ttf', 20)
+    # text_coord = 180
+    # for line in intro_text:
+    #     string_rendered = font.render(line, 2, pygame.Color('white'))
+    #     intro_rect = string_rendered.get_rect()
+    #     text_coord += 10
+    #     intro_rect.top = text_coord
+    #     intro_rect.x = 30
+    #     text_coord += intro_rect.height
+    #     screen.blit(string_rendered, intro_rect)
+    #
+    # while True:
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             terminate()
+    #         elif event.type == pygame.KEYDOWN or \
+    #                 event.type == pygame.MOUSEBUTTONDOWN:
+    #             return
+    #     pygame.display.flip()
+    #     clock.tick(FPS)
 
 def finish_screen(screen, w=False, bill=0):
-    with open('data/records.csv', encoding="utf8") as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=';', quotechar='"')
-        b = sorted(reader, key=lambda x: int(x['bill']))
-        b(LEVELS)
+    textinput = pygame_textinput.TextInputVisualizer()
+    textinput.font_color = (255, 255, 255)
+    textinput.cursor_color = (200, 200, 200)
+
     clock = pygame.time.Clock()
     if w:
         intro_text = ["Победа!", f"Ваш счёт: {bill}", "Введите Ваше имя:"]
-
-
     else:
         intro_text = ["Game over!", ]
-    fon = pygame.transform.scale(load_image('nightskycolor.png'), (size))
-    screen.blit(fon, (0, 0))
-    font = pygame.font.Font('beer-money12.ttf', 36)
-    text_coord = 180
-    for line in intro_text:
-        string_rendered = font.render(line, 2, pygame.Color('white'))
-        intro_rect = string_rendered.get_rect()
-        text_coord += 10
-        intro_rect.top = text_coord
-        intro_rect.x = 30
-        text_coord += intro_rect.height
-        screen.blit(string_rendered, intro_rect)
-
     while True:
-        for event in pygame.event.get():
+        fon = pygame.transform.scale(load_image('nightskycolor.png'), (size))
+        screen.blit(fon, (0, 0))
+        font = pygame.font.Font('beer-money12.ttf', 36)
+        text_coord = 180
+        for line in intro_text:
+            string_rendered = font.render(line, 2, pygame.Color('white'))
+            intro_rect = string_rendered.get_rect()
+            text_coord += 10
+            intro_rect.top = text_coord
+            intro_rect.x = 30
+            text_coord += intro_rect.height
+            screen.blit(string_rendered, intro_rect)
+        events = pygame.event.get()
+        textinput.update(events)
+        screen.blit(textinput.surface, (330, 310))
+        for event in events:
             if event.type == pygame.QUIT:
-                terminate()
+                exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                print(f"User pressed enter! Input so far: {textinput.value}")
+
+                rec_table(screen)  # показать турнирную таблицу
+
+
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -343,7 +388,7 @@ def main():
 
         hits = pygame.sprite.spritecollide(monsters[LEV], patron_sprites, False)
         if hits:
-            monsters[LEV].life -= 10
+            monsters[LEV].life -= 100
             hits = pygame.sprite.groupcollide(patron_sprites, mons_sprites, True, False)
 
         screen.fill(pygame.Color("black"))
@@ -377,6 +422,7 @@ def main():
 
     pygame.quit()
 
+
 if __name__ == "__main__":
     main()
 
@@ -384,7 +430,3 @@ if __name__ == "__main__":
 # icon = pygame.image.load("data/pics/icon32.png").convert()
 # icon.set_colorkey(WHITE)
 # # pygame.display.set_icon(icon)
-#   background_music = pygame.mixer.Sound("data/Mars.wav")
-#     victory_music = pygame.mixer.Sound("data/victory.mp3")
-#     losing_music = pygame.mixer.Sound("data/losing1.mp3")
-#     background_music.play()

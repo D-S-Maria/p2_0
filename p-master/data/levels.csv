@@ -1,4 +1,4 @@
 lev;monster;monster_life;sound;speed
 1;blue1.png;500;data\Mars.wav;1
-2;green1.png;1000;data\Mercury.wav;1.5
-3;red.png;3000;data\Venus.wav;2
+2;green1.png;10000;data\Mercury.wav;1.5
+3;red.png;30000;data\Venus.wav;2
